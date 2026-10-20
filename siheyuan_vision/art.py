@@ -130,7 +130,7 @@ def _lat_bubujin(surf, inner):
 def _lat_binglie(surf, inner):
     """冰裂纹：随机点连最近的几个邻点，像冰面裂开。"""
     rng = random.Random(11)
-    pts = [(rng.uniform(inner.left, inner.right), rng.uniform(inner.top, inner.bottom)) for _ in range(30)]
+    pts = [(rng.uniform(inner.left, inner.right), rng.uniform(inner.top, inner.bottom)) for _ in range(52)]
     pts += [(inner.left, inner.top), (inner.right, inner.top),
             (inner.left, inner.bottom), (inner.right, inner.bottom)]
     for p in pts:

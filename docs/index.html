@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>四合檐影 · 四合院构件识别小游戏</title>
+<meta name="description" content="看一张四合院构件特写，从四个名字里挑出它：窗棂、门墩、砖雕、院门、檐部，五关闯关，连击计分，答错补一段讲究。">
+<meta name="theme-color" content="#f3ead8">
+<meta property="og:type" content="website">
+<meta property="og:title" content="四合檐影 · 四合院构件识别小游戏">
+<meta property="og:description" content="五关识图：窗棂 / 门墩 / 砖雕 / 院门 / 檐部。答错不扣分，补一段古建讲究。">
+<meta property="og:image" content="screenshots/02-level1.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f3ead8'/%3E%3Cpath d='M4 14 16 6l12 8' stroke='%234a607e' stroke-width='2.6' fill='none' stroke-linejoin='round'/%3E%3Crect x='8' y='15' width='16' height='11' fill='none' stroke='%239e3a2e' stroke-width='2'/%3E%3Crect x='14' y='19' width='4' height='7' fill='%239e3a2e'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <header class="hud">
+    <div class="hud__brand">
+      <span class="hud__title">四合檐影</span>
+      <span class="hud__level" id="hudLevel">第 1 关</span>
+    </div>
+    <div class="hud__stats">
+      <span class="stat"><b id="hudScore">0</b><small>分数</small></span>
+      <span class="stat stat--combo"><b id="hudCombo">×0</b><small>连击</small></span>
+      <span class="stat"><b id="hudProgress">1/6</b><small>进度</small></span>
+      <span class="lives" id="hudLives" aria-label="剩余生命"></span>
+      <span class="timer" id="hudTimer" hidden>75s</span>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div class="card">
+      <canvas id="card" width="600" height="400" aria-label="构件特写"></canvas>
+    </div>
+    <p class="ask">这是什么构件？</p>
+    <div class="options" id="options" role="group" aria-label="选项"></div>
+    <p class="hint" id="hint">点选项，或按 1 / 2 / 3 / 4</p>
+  </main>
+
+  <!-- 开始 -->
+  <section class="screen is-open" id="screenStart">
+    <div class="panel">
+      <p class="kicker">BEIJING SIHEYUAN · COMPONENT QUIZ</p>
+      <h1>四合檐影</h1>
+      <p class="lede">看一张构件特写，从四个名字里挑出它。答对连击，答错不扣分，但要听一段讲究。</p>
+      <ul class="rules">
+        <li><b>五关</b>：窗棂 → 门墩 → 砖雕 → 院门 → 综合试炼（限时）</li>
+        <li><b>连击</b>：答对 +10，连击最高 ×5，每题额外加分</li>
+        <li><b>生命</b>：每关 3 条，答错扣一条，耗尽重玩本关</li>
+      </ul>
+      <button class="btn btn--primary" id="btnStart" type="button">开 始 闯 关</button>
+      <p class="hint">回车 / 空格 也可以开始</p>
+    </div>
+  </section>
+
+  <!-- 本关通过 -->
+  <section class="screen" id="screenClear">
+    <div class="panel">
+      <h2>本关通过</h2>
+      <p class="big" id="clearScore">6 / 6 题</p>
+      <p class="lede" id="clearDetail"></p>
+      <button class="btn btn--primary" id="btnNext" type="button">继 续</button>
+      <p class="hint">回车 / 空格 继续</p>
+    </div>
+  </section>
+
+  <!-- 本关未过 -->
+  <section class="screen" id="screenFailed">
+    <div class="panel">
+      <h2 class="bad">本关未过</h2>
+      <p class="lede" id="failReason">生命耗尽</p>
+      <p class="hint">这一关的题目会重新出</p>
+      <button class="btn btn--primary" id="btnRetry" type="button">重 玩 本 关</button>
+    </div>
+  </section>
+
+  <!-- 终局 -->
+  <section class="screen" id="screenFinished">
+    <div class="panel panel--wide">
+      <h2>五关全通</h2>
+      <p class="lede" id="finalLine"></p>
+      <div class="cert"><canvas id="cert" width="720" height="480" aria-label="电子纪念证书"></canvas></div>
+      <div class="row">
+        <button class="btn" id="btnSave" type="button">保存证书</button>
+        <button class="btn btn--primary" id="btnAgain" type="button">再玩一次</button>
+      </div>
+      <p class="hint">R 重开 · S 存档</p>
+    </div>
+  </section>
+
+  <!-- 反馈弹窗 -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal__box">
+      <h3 id="modalTitle">答对了</h3>
+      <p class="modal__answer" id="modalAnswer"></p>
+      <p class="modal__note" id="modalNote"></p>
+      <p class="modal__points" id="modalPoints"></p>
+      <button class="btn btn--primary" id="btnContinue" type="button">继 续</button>
+      <p class="hint">点任意处 / 回车 继续</p>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span>零依赖 · 纯 Canvas 2D · 可离线</span>
+    <a href="https://github.com/HH200606/siheyuan-vision" rel="noopener">源码</a>
+  </footer>
+</div>
+
+<script src="js/content.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/art.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
