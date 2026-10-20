@@ -390,17 +390,24 @@
       }
       for (const d of [-1, 1]) line(ctx, carveSoft, cx, cy, cx + d * r.w * 0.42, cy + r.h * 0.18, 5);
     } else if (variant === 'bogu') {
-      poly(ctx, carveSoft, [
-        [cx - r.w * 0.12, cy - r.h * 0.1],
-        [cx - r.w * 0.05, cy - r.h * 0.34],
-        [cx + r.w * 0.05, cy - r.h * 0.34],
-        [cx + r.w * 0.12, cy - r.h * 0.1],
-        [cx + r.w * 0.07, cy + r.h * 0.26],
-        [cx - r.w * 0.07, cy + r.h * 0.26],
-      ], 4);
-      strokeRect(ctx, carveSoft, cx + r.w * 0.16, cy + r.h * 0.12, r.w * 0.24, r.h * 0.12, 4);
-      strokeRect(ctx, carveSoft, cx + r.w * 0.14, cy + r.h * 0.26, r.w * 0.28, r.h * 0.09, 4);
-      circle(ctx, carveSoft, cx - r.w * 0.3, cy + r.h * 0.2, r.w * 0.08, 4);
+      // 花瓶：口沿 → 束颈 → 鼓腹 → 圈足（坐标按面板尺寸归一化）
+      const vase = [
+        [-0.055, -0.36], [0.055, -0.36],
+        [0.03, -0.29], [0.045, -0.2],
+        [0.13, -0.04], [0.125, 0.14],
+        [0.07, 0.23], [0.085, 0.28],
+        [-0.085, 0.28], [-0.07, 0.23],
+        [-0.125, 0.14], [-0.13, -0.04],
+        [-0.045, -0.2], [-0.03, -0.29],
+      ].map(([fx, fy]) => [cx + fx * r.w, cy + fy * r.h]);
+      poly(ctx, carveSoft, vase, 4);
+
+      // 书两册
+      strokeRect(ctx, carveSoft, cx + r.w * 0.16, cy + r.h * 0.16, r.w * 0.2, r.h * 0.09, 4);
+      strokeRect(ctx, carveSoft, cx + r.w * 0.14, cy + r.h * 0.27, r.w * 0.24, r.h * 0.07, 4);
+      // 果盘
+      circle(ctx, carveSoft, cx - r.w * 0.3, cy + r.h * 0.12, r.w * 0.07, 4);
+      circle(ctx, carveSoft, cx - r.w * 0.3, cy + r.h * 0.24, r.w * 0.16, 4);
     } else if (variant === 'ruishou') {
       const bw = r.w * 0.52;
       const bh = r.h * 0.22;

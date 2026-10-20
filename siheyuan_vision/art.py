@@ -320,14 +320,22 @@ def _paint_brick(surf, r, variant):
             _line(surf, carve_soft, (cx, cy), (cx + dx * inner.w * 0.42, cy + inner.h * 0.18), 5)
 
     elif variant == "bogu":
-        # 博古：花瓶 + 书 + 果盘
-        vase = [(cx - inner.w * 0.12, cy - inner.h * 0.10), (cx - inner.w * 0.05, cy - inner.h * 0.34),
-                (cx + inner.w * 0.05, cy - inner.h * 0.34), (cx + inner.w * 0.12, cy - inner.h * 0.10),
-                (cx + inner.w * 0.07, cy + inner.h * 0.26), (cx - inner.w * 0.07, cy + inner.h * 0.26)]
+        # 博古：花瓶（口沿→束颈→鼓腹→圈足）+ 书两册 + 果盘
+        norm = [
+            (-0.055, -0.36), (0.055, -0.36),
+            (0.03, -0.29), (0.045, -0.2),
+            (0.13, -0.04), (0.125, 0.14),
+            (0.07, 0.23), (0.085, 0.28),
+            (-0.085, 0.28), (-0.07, 0.23),
+            (-0.125, 0.14), (-0.13, -0.04),
+            (-0.045, -0.2), (-0.03, -0.29),
+        ]
+        vase = [(cx + fx * inner.w, cy + fy * inner.h) for fx, fy in norm]
         _poly(surf, carve_soft, vase, 4)
-        _rect(surf, carve_soft, (cx + inner.w * 0.16, cy + inner.h * 0.12, inner.w * 0.24, inner.h * 0.12), 4)
-        _rect(surf, carve_soft, (cx + inner.w * 0.14, cy + inner.h * 0.26, inner.w * 0.28, inner.h * 0.09), 4)
-        _circle(surf, carve_soft, (cx - inner.w * 0.30, cy + inner.h * 0.20), inner.w * 0.08, 4)
+        _rect(surf, carve_soft, (cx + inner.w * 0.16, cy + inner.h * 0.16, inner.w * 0.2, inner.h * 0.09), 4)
+        _rect(surf, carve_soft, (cx + inner.w * 0.14, cy + inner.h * 0.27, inner.w * 0.24, inner.h * 0.07), 4)
+        _circle(surf, carve_soft, (cx - inner.w * 0.30, cy + inner.h * 0.12), inner.w * 0.07, 4)
+        _circle(surf, carve_soft, (cx - inner.w * 0.30, cy + inner.h * 0.24), inner.w * 0.16, 4)
 
     elif variant == "ruishou":
         # 瑞兽（简化麒麟）：身 + 头 + 独角 + 尾
